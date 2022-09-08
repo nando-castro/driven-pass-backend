@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createCredential } from "../controllers/credentialController";
+import * as credentialController from "../controllers/credentialController";
 import { schemaValidateMiddleware } from "../middlewares/schemaValidateMiddleware";
 import { validateToken } from "../middlewares/validateTokenMiddleware";
 import { credentialSchema } from "../schemas/credentialSchema";
@@ -10,7 +10,13 @@ credentialRouter.post(
   "/credential",
   validateToken,
   schemaValidateMiddleware(credentialSchema),
-  createCredential
+  credentialController.createCredential
+);
+
+credentialRouter.get(
+  "/credential/:id",
+  validateToken,
+  credentialController.findCredential
 );
 
 export { credentialRouter };

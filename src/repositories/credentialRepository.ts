@@ -31,3 +31,8 @@ export async function findByTitle(title: string) {
   });
   return rows;
 }
+
+export async function findCredentialById(id: number) {
+  const rows = await client.credential.findUnique({ where: { id } });
+  return rows;
+}

@@ -1,4 +1,4 @@
-import { conflictError } from "./../utils/errorUtils";
+import { conflictError, notFoundError } from "./../utils/errorUtils";
 import { TypeCredentialData } from "../types/CrendentialTypes";
 import * as credentialRepository from "../repositories/credentialRepository";
 import Cryptr from "cryptr";
@@ -18,4 +18,17 @@ export async function createCredential(credential: TypeCredentialData) {
     password: encryptPassword,
   };
   await credentialRepository.insert(data);
+}
+
+export async function findCredentialById(id: number) {
+  const credentialExists = await credentialRepository.findCredentialById(id);
+  if (!credentialExists) throw notFoundError(`no data in the database`);
+  const descryptPassword = cryptr.decrypt(credentialExists.password);
+  const data = {
+    title: credentialExists.title,
+    url: credentialExists.url,
+    userName: credentialExists.userName,
+    password: descryptPassword,
+  };
+  return data;
 }
