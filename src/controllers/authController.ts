@@ -1,4 +1,4 @@
-import { CreateUserRegister } from "./../types/CreateUserRegister";
+import { TypeUserData } from "../types/UserTypes";
 import { Request, Response } from "express";
 import * as authService from "../services/authService";
 
@@ -9,7 +9,7 @@ export async function register(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response) {
-  const user: CreateUserRegister = req.body;
+  const user: TypeUserData = req.body;
   const result = await authService.loginUser(user);
   console.log(result);
   res.status(200).send(result);

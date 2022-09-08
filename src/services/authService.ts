@@ -1,5 +1,4 @@
-import dotenv from "dotenv";
-import { CreateUserRegister } from "./../types/CreateUserRegister";
+import { TypeUserData } from "../types/UserTypes";
 import * as authRepository from "../repositories/authRepository";
 import {
   conflictError,
@@ -8,7 +7,6 @@ import {
 } from "./../utils/errorUtils";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-dotenv.config();
 
 export async function registerUser(email: string, password: string) {
   const userExists = await authRepository.findByUser(email);
@@ -19,7 +17,7 @@ export async function registerUser(email: string, password: string) {
   await authRepository.insert(email, passcrypt);
 }
 
-export async function loginUser(user: CreateUserRegister) {
+export async function loginUser(user: TypeUserData) {
   const userExists = await authRepository.findByUser(user.email);
   if (!userExists) {
     throw notFoundError(`user not registered`);

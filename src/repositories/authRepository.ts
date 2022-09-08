@@ -1,4 +1,3 @@
-import { CreateUserRegister } from "./../types/CreateUserRegister";
 import client from "../databases/datasbase";
 
 export interface User {
