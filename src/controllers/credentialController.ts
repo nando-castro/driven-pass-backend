@@ -16,6 +16,12 @@ export async function getCredential(req: Request, res: Response) {
   res.status(200).send(result);
 }
 
+export async function getAllCredentials(req: Request, res: Response) {
+  const { token } = res.locals;
+  const result = await credentialService.getAllCredentials(token);
+  res.status(200).send(result);
+}
+
 export async function removeCredential(req: Request, res: Response) {
   const { token } = res.locals;
   const { id } = req.params;

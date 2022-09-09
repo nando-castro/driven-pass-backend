@@ -23,6 +23,13 @@ export async function findCredentialById(id: number) {
   return rows;
 }
 
+export async function findAllCredentials(userId: number) {
+  const rows = await client.note.findMany({
+    where: { userId },
+  });
+  return rows;
+}
+
 export async function deleteById(id: number) {
   await client.credential.delete({ where: { id } });
 }
