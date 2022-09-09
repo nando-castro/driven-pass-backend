@@ -7,17 +7,72 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
+model Card {
+  id             Int       @id @default(autoincrement())
+  title          String    @unique @db.VarChar(255)
+  userId         Int
+  numero         String    @unique @db.VarChar(25)
+  cardholderName String    @unique @db.VarChar(50)
+  password       String    @db.VarChar(255)
+  securityCode   String    @db.VarChar(3)
+  expirationDate String    @db.VarChar(20)
+  isVirtual      Boolean
+  type           cardType
+  createdAt      DateTime @default(now()) @db.Timestamptz()
+  User           User      @relation(fields: [userId], references: [id])
 }
 
 model Credential {
-  id       Int    @id @default(autoincrement())
-  title    String @unique
-  url      String
-  userName String
-  password String
-  userId   Int
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  title     String    @unique @db.VarChar(255)
+  url       String    @db.VarChar
+  userName  String    @db.VarChar(255)
+  password  String    @db.VarChar(255)
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  User      User      @relation(fields: [userId], references: [id])
+}
+
+model Network {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  title     String    @unique @db.VarChar(50)
+  name      String    @db.VarChar(255)
+  password  String    @db.VarChar(255)
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  User      User      @relation(fields: [userId], references: [id])
+}
+
+model Note {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  title     String    @unique @db.VarChar(50)
+  text      String    @db.VarChar(1000)
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  User      User      @relation(fields: [userId], references: [id])
+}
+
+model Session {
+  id        Int       @id @default(autoincrement())
+  token     String    @unique @db.VarChar
+  userId    Int
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  User      User      @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  email      String       @unique @db.VarChar
+  password   String       @db.VarChar(255)
+  Card       Card[]
+  Credential Credential[]
+  Network    Network[]
+  Note       Note[]
+  Session    Session[]
+}
+
+enum cardType {
+  credito
+  debito
+  ambos
 }

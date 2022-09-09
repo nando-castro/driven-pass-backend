@@ -1,26 +1,11 @@
 import {
-  PartialCredentialData,
   TypeCredentialData,
 } from "../types/CrendentialTypes";
 import client from "../databases/datasbase";
 
-/* export interface ICrendential {
-  id: number;
-  title: string;
-  url: string;
-  userName: string;
-  password: string;
-} */
-
-export async function insert(createCredential: TypeCredentialData) {
+export async function insert(data: TypeCredentialData) {
   await client.credential.create({
-    data: {
-      userId: createCredential.userId,
-      title: createCredential.title,
-      url: createCredential.url,
-      userName: createCredential.userName,
-      password: createCredential.password,
-    },
+    data,
   });
 }
 
