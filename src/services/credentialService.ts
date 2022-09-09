@@ -47,6 +47,7 @@ export async function findCredentialById(id: number, token: string) {
     userName: credentialExists.userName,
     password: descryptPassword,
     userId: credentialExists.userId,
+    createdAt: credentialExists.createdAt,
   };
   return data;
 }
