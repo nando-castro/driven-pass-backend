@@ -1,4 +1,4 @@
-import { unauthorizedError } from "./../utils/errorUtils";
+import { notFoundError, unauthorizedError } from "./../utils/errorUtils";
 import jwt from "jsonwebtoken";
 import { TypeNoteData } from "./../types/NoteTypes";
 import * as noteRepository from "../repositories/noteRepository";
@@ -16,13 +16,13 @@ export async function createNote(note: TypeNoteData, token: string) {
 }
 
 export async function removeNote(id: number, token: string) {
-  const noteExists = await noteRepository.findById(id);
   const dataUser = JSON.stringify(
     jwt.verify(token, `${process.env.JWT_SECRETKEY}`)
   );
   const parsedData: { id: number } = JSON.parse(dataUser);
-  if (noteExists?.userId !== parsedData.id)
+  const noteExists = await noteRepository.findById(id);
+  if (!noteExists) throw notFoundError(`no data in the database`);
+  if (parsedData.id !== noteExists.id)
     throw unauthorizedError(`this credential does not belong to this user`);
-  if (noteExists) throw conflictError(`note exixts`);
   await noteRepository.deleteNote(id);
 }
