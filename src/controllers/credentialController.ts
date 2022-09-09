@@ -9,7 +9,7 @@ export async function createCredential(req: Request, res: Response) {
   res.status(200).send(`credential add sucessfull`);
 }
 
-export async function findCredential(req: Request, res: Response) {
+export async function getCredential(req: Request, res: Response) {
   const { token } = res.locals;
   const { id } = req.params;
   const result = await credentialService.findCredentialById(Number(id), token);

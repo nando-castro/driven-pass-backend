@@ -16,7 +16,7 @@ credentialRouter.post(
 credentialRouter.get(
   "/credential/:id",
   validateToken,
-  credentialController.findCredential
+  credentialController.getCredential
 );
 
 credentialRouter.delete(
