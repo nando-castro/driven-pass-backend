@@ -3,15 +3,13 @@ import jwt from "jsonwebtoken";
 import { TypeNoteData } from "./../types/NoteTypes";
 import * as noteRepository from "../repositories/noteRepository";
 import { conflictError } from "../utils/errorUtils";
+import { jwtVerify } from "../utils/jwtUtils";
 
 export async function createNote(note: TypeNoteData, token: string) {
   const noteExists = await noteRepository.findByTitle(note.title);
-  const dataUser = JSON.stringify(
-    jwt.verify(token, `${process.env.JWT_SECRETKEY}`)
-  );
-  const parsedData: { id: number } = JSON.parse(dataUser);
+  const dataUser = await jwtVerify(token);
   if (noteExists) throw conflictError(`note exixts`);
-  const data = { ...note, userId: parsedData.id };
+  const data = { ...note, userId: dataUser.id };
   await noteRepository.insert(data);
 }
 
@@ -28,23 +26,17 @@ export async function removeNote(id: number, token: string) {
 }
 
 export async function getNoteById(id: number, token: string) {
-  const dataUser = JSON.stringify(
-    jwt.verify(token, `${process.env.JWT_SECRETKEY}`)
-  );
-  const parsedData: { id: number } = JSON.parse(dataUser);
+  const dataUser = await jwtVerify(token);
   const noteExists = await noteRepository.findById(id);
   if (!noteExists) throw notFoundError(`no data in the database`);
-  if (parsedData.id !== noteExists.id)
+  if (dataUser.id !== noteExists.id)
     throw unauthorizedError(`this credential does not belong to this user`);
   const result = await noteRepository.findById(id);
   return result;
 }
 
 export async function getAllNotes(token: string) {
-  const dataUser = JSON.stringify(
-    jwt.verify(token, `${process.env.JWT_SECRETKEY}`)
-  );
-  const parsedData: { id: number } = JSON.parse(dataUser);
-  const result = await noteRepository.findAllNotes(parsedData.id);
+  const dataUser = await jwtVerify(token);
+  const result = await noteRepository.findAllNotes(dataUser.id);
   return result;
 }

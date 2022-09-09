@@ -7,22 +7,20 @@ import {
 import { TypeCredentialData } from "../types/CrendentialTypes";
 import * as credentialRepository from "../repositories/credentialRepository";
 import jwt from "jsonwebtoken";
+import { jwtVerify } from "../utils/jwtUtils";
 
 export async function createCredential(
   credential: TypeCredentialData,
   token: string
 ) {
-  const dataUser = JSON.stringify(
-    jwt.verify(token, `${process.env.JWT_SECRETKEY}`)
-  );
-  const parsedData: { id: number } = JSON.parse(dataUser);
+  const dataUser = await jwtVerify(token);
   const credentialTitleExists = await credentialRepository.findByTitle(
     credential.title
   );
   if (credentialTitleExists) throw conflictError(`credential exists`);
   const encryptPassword = await cryptPassword(credential.password);
   const data = {
-    userId: parsedData.id,
+    userId: dataUser.id,
     title: credential.title,
     url: credential.url,
     userName: credential.userName,
@@ -32,13 +30,10 @@ export async function createCredential(
 }
 
 export async function findCredentialById(id: number, token: string) {
-  const dataUser = JSON.stringify(
-    jwt.verify(token, `${process.env.JWT_SECRETKEY}`)
-  );
-  const parsedData: { id: number } = JSON.parse(dataUser);
+  const dataUser = await jwtVerify(token);
   const credentialExists = await credentialRepository.findCredentialById(id);
   if (!credentialExists) throw notFoundError(`no data in the database`);
-  if (parsedData.id !== credentialExists.id)
+  if (dataUser.id !== credentialExists.id)
     throw unauthorizedError(`this credential does not belong to this user`);
   const descryptPassword = await decryptPassword(credentialExists.password);
   const data = {
@@ -53,23 +48,16 @@ export async function findCredentialById(id: number, token: string) {
 }
 
 export async function getAllCredentials(token: string) {
-  const dataUser = JSON.stringify(
-    jwt.verify(token, `${process.env.JWT_SECRETKEY}`)
-  );
-  const parsedData: { id: number } = JSON.parse(dataUser);
-  const result = await credentialRepository.findAllCredentials(parsedData.id);
+  const dataUser = await jwtVerify(token);
+  const result = await credentialRepository.findAllCredentials(dataUser.id);
   return result;
 }
 
 export async function removeCredential(id: number, token: string) {
+  const dataUser = await jwtVerify(token);
   const credentialExists = await credentialRepository.findCredentialById(id);
-  const dataUser = JSON.stringify(
-    jwt.verify(token, `${process.env.JWT_SECRETKEY}`)
-  );
-  const parsedData: { id: number } = JSON.parse(dataUser);
-
   if (!credentialExists) throw notFoundError(`no data in the database`);
-  if (parsedData.id !== credentialExists.id)
+  if (dataUser.id !== credentialExists.id)
     throw unauthorizedError(`this credential does not belong to this user`);
 
   await credentialRepository.deleteById(id);
