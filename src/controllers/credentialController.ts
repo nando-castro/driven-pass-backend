@@ -15,3 +15,10 @@ export async function findCredential(req: Request, res: Response) {
   const result = await credentialService.findCredentialById(Number(id), token);
   res.status(200).send(result);
 }
+
+export async function removeCredential(req: Request, res: Response) {
+  const { token } = res.locals;
+  const { id } = req.params;
+  await credentialService.removeCredential(Number(id), token);
+  res.status(200).send(`delete credential sucessfull`);
+}

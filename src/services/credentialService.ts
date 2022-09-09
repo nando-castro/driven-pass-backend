@@ -51,3 +51,17 @@ export async function findCredentialById(id: number, token: string) {
   };
   return data;
 }
+
+export async function removeCredential(id: number, token: string) {
+  const credentialExists = await credentialRepository.findCredentialById(id);
+  const dataUser = JSON.stringify(
+    jwt.verify(token, `${process.env.JWT_SECRETKEY}`)
+  );
+  const parsedData: { id: number } = JSON.parse(dataUser);
+
+  if (!credentialExists) throw notFoundError(`no data in the database`);
+  if (parsedData.id !== credentialExists.id)
+    throw unauthorizedError(`this credential does not belong to this user`);
+
+  await credentialRepository.deleteById(id);
+}

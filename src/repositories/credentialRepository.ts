@@ -1,6 +1,4 @@
-import {
-  TypeCredentialData,
-} from "../types/CrendentialTypes";
+import { TypeCredentialData } from "../types/CrendentialTypes";
 import client from "../databases/datasbase";
 
 export async function insert(data: TypeCredentialData) {
@@ -23,4 +21,8 @@ export async function findCredentialById(id: number) {
     where: { id },
   });
   return rows;
+}
+
+export async function deleteById(id: number) {
+  await client.credential.delete({ where: { id } });
 }
