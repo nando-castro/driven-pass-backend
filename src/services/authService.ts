@@ -5,15 +5,15 @@ import {
   notFoundError,
   unauthorizedError,
 } from "./../utils/errorUtils";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { comparePassword, hashPassword } from "../utils/passwordUtils";
 
 export async function registerUser(email: string, password: string) {
   const userExists = await authRepository.findByUser(email);
   if (userExists) {
     throw conflictError(`user already registered`);
   }
-  const passcrypt = bcrypt.hashSync(password, 10);
+  const passcrypt = await hashPassword(password);
   await authRepository.insert(email, passcrypt);
 }
 
@@ -22,7 +22,7 @@ export async function loginUser(user: TypeUserData) {
   if (!userExists) {
     throw notFoundError(`user not registered`);
   }
-  const decryptpass = bcrypt.compareSync(user.password, userExists.password);
+  const decryptpass = await comparePassword(user.password, userExists.password);
   if (!decryptpass) {
     throw unauthorizedError(`email or password incorrect`);
   }
