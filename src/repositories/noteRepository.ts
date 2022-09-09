@@ -23,6 +23,8 @@ export async function findById(id: number) {
 }
 
 export async function findAllNotes(userId: number) {
-  const rows = await client.note.findMany({ where: { userId } });
+  const rows = await client.note.findMany({
+    where: { userId },
+  });
   return rows;
 }

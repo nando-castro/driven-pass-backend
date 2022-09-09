@@ -12,12 +12,8 @@ noteRouter.post(
   schemaValidateMiddleware(noteSchema),
   noteController.createNote
 );
-noteRouter.get(
-  "/note/:id",
-  validateToken,
-  noteController.getNoteById
-);
-noteRouter.get("/note", validateToken, noteController.getNotes);
+noteRouter.get("/note/:id", validateToken, noteController.getNoteById);
+noteRouter.get("/notes", validateToken, noteController.getNotes);
 noteRouter.delete("/note/:id", validateToken, noteController.removeNote);
 
 export { noteRouter };

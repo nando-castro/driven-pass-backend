@@ -10,12 +10,15 @@ export async function createNote(req: Request, res: Response) {
 }
 
 export async function getNoteById(req: Request, res: Response) {
-  const result = `ok`;
+  const { token } = res.locals;
+  const { id } = req.params;
+  const result = await noteService.getNoteById(Number(id), token);
   res.status(200).send(result);
 }
 
 export async function getNotes(req: Request, res: Response) {
-  const result = `ok`;
+  const { token } = res.locals;
+  const result = await noteService.getAllNotes(token);
   res.status(200).send(result);
 }
 
