@@ -1,5 +1,5 @@
 import { TypeNoteData } from "../types/NoteTypes";
-import client from "../databases/datasbase";
+import client from "../databases/database";
 
 export async function insert(data: TypeNoteData) {
   await client.note.create({ data });

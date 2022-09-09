@@ -1,4 +1,4 @@
-import client from "../databases/datasbase";
+import client from "../databases/database";
 
 export interface User {
   id: number;

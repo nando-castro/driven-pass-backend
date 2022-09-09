@@ -8,56 +8,56 @@ datasource db {
 }
 
 model Card {
-  id             Int       @id @default(autoincrement())
-  title          String    @unique @db.VarChar(255)
+  id             Int      @id @default(autoincrement())
+  title          String   @unique @db.VarChar(255)
   userId         Int
-  numero         String    @unique @db.VarChar(25)
-  cardholderName String    @unique @db.VarChar(50)
-  password       String    @db.VarChar(255)
-  securityCode   String    @db.VarChar(3)
-  expirationDate String    @db.VarChar(20)
+  numero         String   @unique @db.VarChar
+  cardholderName String   @unique @db.VarChar(50)
+  password       String   @db.VarChar
+  securityCode   String   @db.VarChar
+  expirationDate String   @db.VarChar(20)
   isVirtual      Boolean
-  type           cardType
+  type           CardType
   createdAt      DateTime @default(now()) @db.Timestamptz()
-  User           User      @relation(fields: [userId], references: [id])
+  User           User     @relation(fields: [userId], references: [id])
 }
 
 model Credential {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   userId    Int
-  title     String    @unique @db.VarChar(255)
-  url       String    @db.VarChar
-  userName  String    @db.VarChar(255)
-  password  String    @db.VarChar(255)
+  title     String   @unique @db.VarChar(255)
+  url       String   @db.VarChar
+  userName  String   @db.VarChar(255)
+  password  String   @db.VarChar(255)
   createdAt DateTime @default(now()) @db.Timestamptz()
-  User      User      @relation(fields: [userId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
 }
 
 model Network {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   userId    Int
-  title     String    @unique @db.VarChar(50)
-  name      String    @db.VarChar(255)
-  password  String    @db.VarChar(255)
+  title     String   @unique @db.VarChar(50)
+  name      String   @db.VarChar(255)
+  password  String   @db.VarChar
   createdAt DateTime @default(now()) @db.Timestamptz()
-  User      User      @relation(fields: [userId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
 }
 
 model Note {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   userId    Int
-  title     String    @unique @db.VarChar(50)
-  text      String    @db.VarChar(1000)
+  title     String   @unique @db.VarChar(50)
+  text      String   @db.VarChar(1000)
   createdAt DateTime @default(now()) @db.Timestamptz()
-  User      User      @relation(fields: [userId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
 }
 
 model Session {
-  id        Int       @id @default(autoincrement())
-  token     String    @unique @db.VarChar
+  id        Int      @id @default(autoincrement())
+  token     String   @unique @db.VarChar
   userId    Int
   createdAt DateTime @default(now()) @db.Timestamptz()
-  User      User      @relation(fields: [userId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
 }
 
 model User {
@@ -71,8 +71,8 @@ model User {
   Session    Session[]
 }
 
-enum cardType {
-  credito
-  debito
-  ambos
+enum CardType {
+  credit
+  debit
+  debit_credit
 }

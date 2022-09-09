@@ -1,5 +1,5 @@
 import { TypeCredentialData } from "../types/CrendentialTypes";
-import client from "../databases/datasbase";
+import client from "../databases/database";
 
 export async function insert(data: TypeCredentialData) {
   await client.credential.create({
@@ -24,7 +24,7 @@ export async function findCredentialById(id: number) {
 }
 
 export async function findAllCredentials(userId: number) {
-  const rows = await client.note.findMany({
+  const rows = await client.credential.findMany({
     where: { userId },
   });
   return rows;

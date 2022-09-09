@@ -6,7 +6,6 @@ import {
 } from "./../utils/errorUtils";
 import { TypeCredentialData } from "../types/CrendentialTypes";
 import * as credentialRepository from "../repositories/credentialRepository";
-import jwt from "jsonwebtoken";
 import { jwtVerify } from "../utils/jwtUtils";
 
 export async function createCredential(
@@ -20,10 +19,8 @@ export async function createCredential(
   if (credentialTitleExists) throw conflictError(`credential exists`);
   const encryptPassword = await cryptPassword(credential.password);
   const data = {
+    ...credential,
     userId: dataUser.id,
-    title: credential.title,
-    url: credential.url,
-    userName: credential.userName,
     password: encryptPassword,
   };
   await credentialRepository.insert(data);
@@ -35,7 +32,7 @@ export async function findCredentialById(id: number, token: string) {
   if (!credentialExists) throw notFoundError(`no data in the database`);
   if (dataUser.id !== credentialExists.id)
     throw unauthorizedError(`this credential does not belong to this user`);
-  const descryptPassword = await decryptPassword(credentialExists.password);
+  const descryptPassword = decryptPassword(credentialExists.password);
   const data = {
     title: credentialExists.title,
     url: credentialExists.url,
@@ -50,7 +47,13 @@ export async function findCredentialById(id: number, token: string) {
 export async function getAllCredentials(token: string) {
   const dataUser = await jwtVerify(token);
   const result = await credentialRepository.findAllCredentials(dataUser.id);
-  return result;
+  const data = result.map((credential) => {
+    return {
+      ...credential,
+      password: decryptPassword(credential.password),
+    };
+  });
+  return data;
 }
 
 export async function removeCredential(id: number, token: string) {
