@@ -28,7 +28,7 @@ export async function removeCard(id: number, token: string) {
   const dataUser = await jwtVerify(token);
   const cardExists = await cardRepository.findById(id);
   if (!cardExists) throw notFoundError(`no data in the database`);
-  if (dataUser.id !== id)
+  if (dataUser.id !== cardExists.userId)
     throw unauthorizedError(`this credential does not belong to this user`);
   await cardRepository.deleteCard(id);
 }

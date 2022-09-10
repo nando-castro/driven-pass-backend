@@ -30,7 +30,7 @@ export async function findCredentialById(id: number, token: string) {
   const dataUser = await jwtVerify(token);
   const credentialExists = await credentialRepository.findCredentialById(id);
   if (!credentialExists) throw notFoundError(`no data in the database`);
-  if (dataUser.id !== credentialExists.id)
+  if (dataUser.id !== credentialExists.userId)
     throw unauthorizedError(`this credential does not belong to this user`);
   const descryptPassword = decryptPassword(credentialExists.password);
   const data = {
@@ -60,7 +60,7 @@ export async function removeCredential(id: number, token: string) {
   const dataUser = await jwtVerify(token);
   const credentialExists = await credentialRepository.findCredentialById(id);
   if (!credentialExists) throw notFoundError(`no data in the database`);
-  if (dataUser.id !== credentialExists.id)
+  if (dataUser.id !== credentialExists.userId)
     throw unauthorizedError(`this credential does not belong to this user`);
 
   await credentialRepository.deleteById(id);
