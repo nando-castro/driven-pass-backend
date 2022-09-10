@@ -21,7 +21,7 @@ export async function removeNote(id: number, token: string) {
   const noteExists = await noteRepository.findById(id);
   if (!noteExists) throw notFoundError(`no data in the database`);
   if (parsedData.id !== noteExists.id)
-    throw unauthorizedError(`this credential does not belong to this user`);
+    throw unauthorizedError(`this note does not belong to this user`);
   await noteRepository.deleteNote(id);
 }
 
@@ -30,7 +30,7 @@ export async function getNoteById(id: number, token: string) {
   const noteExists = await noteRepository.findById(id);
   if (!noteExists) throw notFoundError(`no data in the database`);
   if (dataUser.id !== id)
-    throw unauthorizedError(`this credential does not belong to this user`);
+    throw unauthorizedError(`this note does not belong to this user`);
   const result = await noteRepository.findById(id);
   return result;
 }

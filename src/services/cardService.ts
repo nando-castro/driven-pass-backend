@@ -29,14 +29,14 @@ export async function removeCard(id: number, token: string) {
   const cardExists = await cardRepository.findById(id);
   if (!cardExists) throw notFoundError(`no data in the database`);
   if (dataUser.id !== cardExists.userId)
-    throw unauthorizedError(`this credential does not belong to this user`);
+    throw unauthorizedError(`this card does not belong to this user`);
   await cardRepository.deleteCard(id);
 }
 export async function getCard(id: number, token: string) {
   const dataUser = await jwtVerify(token);
   const cardExists = await cardRepository.findById(id);
   if (dataUser.id !== id)
-    throw unauthorizedError(`this credential does not belong to this user`);
+    throw unauthorizedError(`this card does not belong to this user`);
   if (!cardExists) throw notFoundError(`no data in the databases`);
   const descryptNumberCard = await decryptPassword(cardExists.numero);
   const descryptPassword = await decryptPassword(cardExists.password);

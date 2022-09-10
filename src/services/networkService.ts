@@ -27,7 +27,7 @@ export async function removeNetwork(id: number, token: string) {
   const networkExists = await networkRepository.findById(id);
   if (!networkExists) throw notFoundError(`no data in the database`);
   if (dataUser.id !== networkExists.userId)
-    throw unauthorizedError(`this credential does not belong to this user`);
+    throw unauthorizedError(`this network does not belong to this user`);
   await networkRepository.deleteNetwork(id);
 }
 
