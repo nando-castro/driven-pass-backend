@@ -1,18 +1,18 @@
 -- CreateEnum
-CREATE TYPE "cardType" AS ENUM ('credito', 'debito', 'ambos');
+CREATE TYPE "CardType" AS ENUM ('credit', 'debit', 'debit_credit');
 
 -- CreateTable
 CREATE TABLE "Card" (
     "id" SERIAL NOT NULL,
     "title" VARCHAR(255) NOT NULL,
     "userId" INTEGER NOT NULL,
-    "numero" VARCHAR(25) NOT NULL,
+    "numero" VARCHAR NOT NULL,
     "cardholderName" VARCHAR(50) NOT NULL,
-    "password" VARCHAR(255) NOT NULL,
-    "securityCode" VARCHAR(3) NOT NULL,
+    "password" VARCHAR NOT NULL,
+    "securityCode" VARCHAR NOT NULL,
     "expirationDate" VARCHAR(20) NOT NULL,
     "isVirtual" BOOLEAN NOT NULL,
-    "type" "cardType" NOT NULL,
+    "type" "CardType" NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Card_pkey" PRIMARY KEY ("id")
@@ -37,7 +37,7 @@ CREATE TABLE "Network" (
     "userId" INTEGER NOT NULL,
     "title" VARCHAR(50) NOT NULL,
     "name" VARCHAR(255) NOT NULL,
-    "password" VARCHAR(255) NOT NULL,
+    "password" VARCHAR NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Network_pkey" PRIMARY KEY ("id")
