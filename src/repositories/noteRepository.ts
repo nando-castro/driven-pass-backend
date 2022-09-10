@@ -9,7 +9,6 @@ export async function deleteNote(id: number) {
   await client.note.delete({ where: { id } });
 }
 
-//falta compara com o user
 export async function findByTitle(title: string) {
   const rows = await client.note.findUnique({
     where: { title },
