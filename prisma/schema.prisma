@@ -33,6 +33,20 @@ model Credential {
   User      User     @relation(fields: [userId], references: [id])
 }
 
+model Document {
+  id             Int          @id @default(autoincrement())
+  userId         Int
+  title          String       @unique @db.VarChar(255)
+  type           DocumentType
+  name           String       @db.VarChar(255)
+  issueDate      String       @db.VarChar(255)
+  validity       String       @db.VarChar(255)
+  registerNumber String       @db.VarChar(255)
+  issuer         String       @db.VarChar(255)
+  createdAt      DateTime     @default(now()) @db.Timestamptz()
+  User           User         @relation(fields: [userId], references: [id])
+}
+
 model Network {
   id        Int      @id @default(autoincrement())
   userId    Int
@@ -69,10 +83,16 @@ model User {
   Network    Network[]
   Note       Note[]
   Session    Session[]
+  Document   Document[]
 }
 
 enum CardType {
   credit
   debit
   debit_credit
+}
+
+enum DocumentType {
+  rg
+  cnh
 }
