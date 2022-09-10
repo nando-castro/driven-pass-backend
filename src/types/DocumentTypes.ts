@@ -1,13 +1,17 @@
-import { Network } from "@prisma/client";
+import { Document } from "@prisma/client";
 
-export interface INetwork {
+export interface IDocument {
   id: number;
   userId: number;
   title: string;
   name: string;
-  password: string;
+  type: string;
+  issueDate: string;
+  validity: string;
+  registerNumber: string;
+  issuer: string;
   createdAt: string;
 }
 
-export type TypeNetworkData = Omit<Network, "id" | "createdAt">;
-export type PartialNetwork = Partial<Network>;
+export type TypeDocumentData = Omit<Document, "id" | "createdAt">;
+export type PartialDocument = Partial<Document>;
