@@ -20,7 +20,7 @@ export async function removeNote(id: number, token: string) {
   const parsedData: { id: number } = JSON.parse(dataUser);
   const noteExists = await noteRepository.findById(id);
   if (!noteExists) throw notFoundError(`no data in the database`);
-  if (parsedData.id !== noteExists.id)
+  if (parsedData.id !== noteExists.userId)
     throw unauthorizedError(`this note does not belong to this user`);
   await noteRepository.deleteNote(id);
 }
@@ -29,7 +29,7 @@ export async function getNoteById(id: number, token: string) {
   const dataUser = await jwtVerify(token);
   const noteExists = await noteRepository.findById(id);
   if (!noteExists) throw notFoundError(`no data in the database`);
-  if (dataUser.id !== id)
+  if (dataUser.id !== noteExists.userId)
     throw unauthorizedError(`this note does not belong to this user`);
   const result = await noteRepository.findById(id);
   return result;

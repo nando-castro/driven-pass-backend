@@ -38,12 +38,12 @@ export async function removeCard(id: number, token: string) {
 export async function getCard(id: number, token: string) {
   const dataUser = await jwtVerify(token);
   const cardExists = await cardRepository.findById(id);
-  if (dataUser.id !== id)
-    throw unauthorizedError(`this card does not belong to this user`);
   if (!cardExists) throw notFoundError(`no data in the databases`);
-  const descryptNumberCard = await decryptPassword(cardExists.numero);
-  const descryptPassword = await decryptPassword(cardExists.password);
-  const descryptCode = await decryptPassword(cardExists.securityCode);
+  if (dataUser.id !== cardExists.userId)
+    throw unauthorizedError(`this card does not belong to this user`);
+  const descryptNumberCard = decryptPassword(cardExists.numero);
+  const descryptPassword = decryptPassword(cardExists.password);
+  const descryptCode = decryptPassword(cardExists.securityCode);
   const data = {
     id: cardExists.id,
     title: cardExists.title,

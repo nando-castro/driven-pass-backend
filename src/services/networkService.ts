@@ -40,7 +40,7 @@ export async function getNetworkById(id: number, token: string) {
   if (dataUser.id !== id)
     throw unauthorizedError(`this network does not belong to this user`);
   if (!networkExists) throw notFoundError(`no data in the databases`);
-  const descryptPassword = await decryptPassword(networkExists.password);
+  const descryptPassword = decryptPassword(networkExists.password);
   const data = {
     id: networkExists.id,
     title: networkExists.title,
