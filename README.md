@@ -11,7 +11,7 @@ A password manager.
 - Data encryption
 
 
-## Demonstração
+## Demonstration
 
 Insira um gif ou um link de alguma demonstração
 
@@ -28,58 +28,85 @@ To run this project, you will need to add the following environment variables to
 
 ## API Documentation
 
-#### Retorna todos os itens
+### Returns all credentials
 
 ```http
-  GET /api/items
+  GET /api/credenials
 ```
 
-| Parâmetro   | Tipo       | Descrição                           |
+| Parameter   | Type       | Description                           |
 | :---------- | :--------- | :---------------------------------- |
-| `api_key` | `string` | **Obrigatório**. A chave da sua API |
+| `Authorization` | `string` | **Required**. A token generated at sign in |
 
-#### Retorna um item
-
-```http
-  GET /api/items/${id}
+```json
+{
+ "credentials": [
+ {
+  "title": "title",
+  "url": "url",
+  "userName": "user name",
+  "password": "password"
+ },
+ {
+  "title": "title2",
+  "url": "url2",
+  "userName": "user name2",
+  "password": "password2"
+ }
+ ]
+}
 ```
 
-| Parâmetro   | Tipo       | Descrição                                   |
+### Returns a credential
+
+##### Required
+
+```http
+  GET /api/credential/${id}
+```
+
+| Parameter   | Type       | Description                                   |
 | :---------- | :--------- | :------------------------------------------ |
-| `id`      | `string` | **Obrigatório**. O ID do item que você quer |
+| `id`      | `string` | **Required**. The ID of the item you want |
 
-#### add(num1, num2)
+#### Response
 
-Recebe dois números e retorna a sua soma.
+```json
+{
+  "title": "title",
+  "url": "url",
+  "userName": "user name",
+  "password": "password"
+}
+```
 
-
-## Rodando localmente
+## Running Locally
 
 Clone the project
 
 ```bash
-  git clone https://link-para-o-projeto
+  git clone https://github.com/nando-castro/driven-pass-backend.git
 ```
 
-Entre no diretório do projeto
+Enter the project directory
 
 ```bash
   cd my-project
 ```
 
-Instale as dependências
+Install the dependencies
 
 ```bash
   npm install
 ```
 
-Inicie o servidor
+Start the server
 
 ```bash
   npm run start
 ```
 
 
-## Autores
+## Authors
 
-- [@octokatherine](https://www.github.com/octokatherine)
+- [@nando-castro](https://www.github.com/nando-castro)
