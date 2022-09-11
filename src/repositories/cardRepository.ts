@@ -14,8 +14,14 @@ export async function findById(id: number) {
   return rows;
 }
 
-export async function findByTitle(title: string) {
-  const rows = await client.card.findFirst({ where: { title } });
+export async function findByTitle(title: string, userId: number) {
+  const rows = await client.card.findFirst({ where: {
+    title: {
+      equals: title,
+      mode: "insensitive",
+    },
+    userId,
+  }, });
   return rows;
 }
 

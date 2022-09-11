@@ -14,9 +14,10 @@ export async function createCredential(
 ) {
   const dataUser = await jwtVerify(token);
   const credentialTitleExists = await credentialRepository.findByTitle(
+    dataUser.id,
     credential.title
   );
-  if (credentialTitleExists) throw conflictError(`credential exists`);
+  if (credentialTitleExists) throw conflictError(`title credential exists`);
   const encryptPassword = await cryptPassword(credential.password);
   const data = {
     ...credential,

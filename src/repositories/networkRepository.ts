@@ -8,8 +8,16 @@ export async function insert(data: TypeNetworkData) {
 export async function deleteNetwork(id: number) {
   await client.network.delete({ where: { id } });
 }
-export async function findByTitle(title: string) {
-  const rows = await client.network.findUnique({ where: { title } });
+export async function findByTitle(title: string, userId: number) {
+  const rows = await client.network.findFirst({
+    where: {
+      title: {
+        equals: title,
+        mode: "insensitive",
+      },
+      userId,
+    },
+  });
   return rows;
 }
 

@@ -10,7 +10,10 @@ import { cryptPassword, decryptPassword } from "../utils/passwordUtils";
 
 export async function createCard(card: TypeCardData, token: string) {
   const dataUser = await jwtVerify(token);
-  const cardTitleExists = await cardRepository.findByTitle(card.title);
+  const cardTitleExists = await cardRepository.findByTitle(
+    card.title,
+    dataUser.id
+  );
   if (cardTitleExists) throw conflictError(`title card exists`);
   const encryptNumberCard = await cryptPassword(card.numero);
   const encryptPassword = await cryptPassword(card.password);

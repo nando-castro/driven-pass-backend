@@ -6,9 +6,9 @@ import { conflictError } from "../utils/errorUtils";
 import { jwtVerify } from "../utils/jwtUtils";
 
 export async function createNote(note: TypeNoteData, token: string) {
-  const noteExists = await noteRepository.findByTitle(note.title);
   const dataUser = await jwtVerify(token);
-  if (noteExists) throw conflictError(`note exixts`);
+  const noteExists = await noteRepository.findByTitle(note.title, dataUser.id);
+  if (noteExists) throw conflictError(`title note exixts`);
   const data = { ...note, userId: dataUser.id };
   await noteRepository.insert(data);
 }

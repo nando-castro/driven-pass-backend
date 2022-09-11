@@ -7,10 +7,14 @@ export async function insert(data: TypeCredentialData) {
   });
 }
 
-export async function findByTitle(title: string) {
+export async function findByTitle(userId: number, title: string) {
   const rows = await client.credential.findFirst({
     where: {
-      title,
+      title: {
+        equals: title,
+        mode: "insensitive",
+      },
+      userId,
     },
   });
   return rows;

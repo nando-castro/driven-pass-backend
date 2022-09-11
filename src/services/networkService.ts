@@ -10,7 +10,10 @@ import * as networkRepository from "../repositories/networkRepository";
 
 export async function createNetwork(network: TypeNetworkData, token: string) {
   const dataUser = await jwtVerify(token);
-  const networkTitleExists = await networkRepository.findByTitle(network.title);
+  const networkTitleExists = await networkRepository.findByTitle(
+    network.title,
+    dataUser.id
+  );
   if (networkTitleExists) throw conflictError(`network title exists`);
   const encryptPassword = await cryptPassword(network.password);
   const data = {

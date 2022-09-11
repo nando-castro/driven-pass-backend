@@ -10,7 +10,8 @@ import {
 export async function createCard(document: TypeDocumentData, token: string) {
   const dataUser = await jwtVerify(token);
   const documentTitleExists = await documentRepository.findByTitle(
-    document.title
+    document.title,
+    dataUser.id
   );
   if (documentTitleExists) throw conflictError(`title document exists`);
   const data = {

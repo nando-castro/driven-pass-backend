@@ -9,9 +9,15 @@ export async function deleteNote(id: number) {
   await client.note.delete({ where: { id } });
 }
 
-export async function findByTitle(title: string) {
-  const rows = await client.note.findUnique({
-    where: { title },
+export async function findByTitle(title: string, userId: number) {
+  const rows = await client.note.findFirst({
+    where: {
+      title: {
+        equals: title,
+        mode: "insensitive",
+      },
+      userId,
+    },
   });
   return rows;
 }

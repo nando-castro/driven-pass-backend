@@ -8,8 +8,14 @@ export async function insert(data: TypeDocumentData) {
 export async function deleteDocument(id: number) {
   await client.document.delete({ where: { id } });
 }
-export async function findByTitle(title: string) {
-  const rows = await client.document.findUnique({ where: { title } });
+export async function findByTitle(title: string, userId: number) {
+  const rows = await client.document.findFirst({ where: {
+    title: {
+      equals: title,
+      mode: "insensitive",
+    },
+    userId,
+  }, });
   return rows;
 }
 
