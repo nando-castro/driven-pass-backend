@@ -1,3 +1,4 @@
+import { formatDate } from "./../utils/dateUtils";
 import { cryptPassword, decryptPassword } from "./../utils/passwordUtils";
 import {
   conflictError,
@@ -34,13 +35,14 @@ export async function findCredentialById(id: number, token: string) {
   if (dataUser.id !== credentialExists.userId)
     throw unauthorizedError(`this credential does not belong to this user`);
   const descryptPassword = decryptPassword(credentialExists.password);
+  const dateFormated = formatDate(credentialExists.createdAt);
   const data = {
     title: credentialExists.title,
     url: credentialExists.url,
     userName: credentialExists.userName,
     password: descryptPassword,
     userId: credentialExists.userId,
-    createdAt: credentialExists.createdAt,
+    createdAt: dateFormated,
   };
   return data;
 }
@@ -52,6 +54,7 @@ export async function getAllCredentials(token: string) {
     return {
       ...credential,
       password: decryptPassword(credential.password),
+      createdAt: formatDate(credential.createdAt),
     };
   });
   return data;

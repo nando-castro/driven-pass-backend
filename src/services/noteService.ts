@@ -1,3 +1,4 @@
+import { formatDate } from "./../utils/dateUtils";
 import { notFoundError, unauthorizedError } from "./../utils/errorUtils";
 import jwt from "jsonwebtoken";
 import { TypeNoteData } from "./../types/NoteTypes";
@@ -32,11 +33,22 @@ export async function getNoteById(id: number, token: string) {
   if (dataUser.id !== noteExists.userId)
     throw unauthorizedError(`this note does not belong to this user`);
   const result = await noteRepository.findById(id);
-  return result;
+  const dateFormated = formatDate(noteExists.createdAt);
+  const data = {
+    ...result,
+    createdAt: dateFormated,
+  };
+  return data;
 }
 
 export async function getAllNotes(token: string) {
   const dataUser = await jwtVerify(token);
   const result = await noteRepository.findAllNotes(dataUser.id);
-  return result;
+  const data = result.map((note) => {
+    return {
+      ...note,
+      createdAt: formatDate(note.createdAt),
+    };
+  });
+  return data;
 }

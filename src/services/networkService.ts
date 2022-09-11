@@ -1,3 +1,4 @@
+import { formatDate } from "./../utils/dateUtils";
 import { cryptPassword, decryptPassword } from "./../utils/passwordUtils";
 import {
   conflictError,
@@ -41,13 +42,14 @@ export async function getNetworkById(id: number, token: string) {
     throw unauthorizedError(`this network does not belong to this user`);
   if (!networkExists) throw notFoundError(`no data in the databases`);
   const descryptPassword = decryptPassword(networkExists.password);
+  const dateFormated = formatDate(networkExists.createdAt);
   const data = {
     id: networkExists.id,
     title: networkExists.title,
     userId: networkExists.userId,
     name: networkExists.name,
     password: descryptPassword,
-    createAt: networkExists.createdAt,
+    createAt: dateFormated,
   };
   return data;
 }
@@ -59,6 +61,7 @@ export async function getNetworks(token: string) {
     return {
       ...network,
       password: decryptPassword(network.password),
+      createdAt: formatDate(network.createdAt),
     };
   });
   return data;

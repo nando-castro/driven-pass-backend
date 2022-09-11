@@ -1,3 +1,4 @@
+import { formatDate } from "./../utils/dateUtils";
 import { jwtVerify } from "../utils/jwtUtils";
 import { TypeCardData } from "./../types/CardTypes";
 import * as cardRepository from "../repositories/cardRepository";
@@ -44,6 +45,7 @@ export async function getCard(id: number, token: string) {
   const descryptNumberCard = decryptPassword(cardExists.numero);
   const descryptPassword = decryptPassword(cardExists.password);
   const descryptCode = decryptPassword(cardExists.securityCode);
+  const dateFormated = formatDate(cardExists.createdAt);
   const data = {
     id: cardExists.id,
     title: cardExists.title,
@@ -55,7 +57,7 @@ export async function getCard(id: number, token: string) {
     expirationDate: cardExists.expirationDate,
     isVirtual: cardExists.isVirtual,
     type: cardExists.type,
-    createAt: cardExists.createdAt,
+    createAt: dateFormated,
   };
   return data;
 }
@@ -68,6 +70,7 @@ export async function getAllCards(token: string) {
       numero: decryptPassword(card.numero),
       securityCode: decryptPassword(card.securityCode),
       password: decryptPassword(card.password),
+      createdAt: formatDate(card.createdAt),
     };
   });
   return data;
