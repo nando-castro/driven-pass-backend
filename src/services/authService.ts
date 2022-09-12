@@ -1,3 +1,4 @@
+import { formatDate, formatDateNow } from "./../utils/dateUtils";
 import { TypeUserData } from "../types/UserTypes";
 import * as authRepository from "../repositories/authRepository";
 import {
@@ -7,6 +8,7 @@ import {
 } from "./../utils/errorUtils";
 import jwt from "jsonwebtoken";
 import { comparePassword, hashPassword } from "../utils/passwordUtils";
+import dayjs from "dayjs";
 
 export async function registerUser(email: string, password: string) {
   const userExists = await authRepository.findByUser(email);
@@ -32,5 +34,15 @@ export async function loginUser(user: TypeUserData) {
   const token = jwt.sign(data, `${process.env.JWT_SECRETKEY}`, {
     expiresIn: 60 * 60 * 24,
   });
+  const dateNow = new Date();
+  const session = await authRepository.findSession(userExists.id);
+  if (session) {
+    if (session.token.length > 0) {
+      await authRepository.updateSession(session.token, token, dateNow);
+    } else {
+      await authRepository.insertSession(userExists.id, token);
+    }
+  }
+  if (!session) await authRepository.insertSession(userExists.id, token);
   return token;
 }

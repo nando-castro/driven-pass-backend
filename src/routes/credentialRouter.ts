@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as credentialController from "../controllers/credentialController";
 import { schemaValidateMiddleware } from "../middlewares/schemaValidateMiddleware";
+import { validateSession } from "../middlewares/validateSessionMiddleware";
 import { validateToken } from "../middlewares/validateTokenMiddleware";
 import { credentialSchema } from "../schemas/credentialSchema";
 
@@ -9,6 +10,7 @@ const credentialRouter = Router();
 credentialRouter.post(
   "/credential",
   validateToken,
+  validateSession,
   schemaValidateMiddleware(credentialSchema),
   credentialController.createCredential
 );
