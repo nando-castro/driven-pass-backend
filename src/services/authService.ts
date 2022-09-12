@@ -32,7 +32,7 @@ export async function loginUser(user: TypeUserData) {
     id: userExists.id,
   };
   const token = jwt.sign(data, `${process.env.JWT_SECRETKEY}`, {
-    expiresIn: 60 * 60 * 24,
+    expiresIn: 60 * 60 * 5,
   });
   const dateNow = new Date();
   const session = await authRepository.findSession(userExists.id);

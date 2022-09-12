@@ -35,52 +35,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = exports.registerUser = void 0;
-const authRepository = __importStar(require("../repositories/authRepository"));
+exports.validateSession = void 0;
+const jwtUtils_1 = require("./../utils/jwtUtils");
+const dateUtils_1 = require("./../utils/dateUtils");
 const errorUtils_1 = require("./../utils/errorUtils");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const passwordUtils_1 = require("../utils/passwordUtils");
-function registerUser(email, password) {
+const authRepository = __importStar(require("../repositories/authRepository"));
+const dayjs_1 = __importDefault(require("dayjs"));
+function validateSession(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const userExists = yield authRepository.findByUser(email);
-        if (userExists) {
-            throw (0, errorUtils_1.conflictError)(`user already registered`);
-        }
-        const passcrypt = yield (0, passwordUtils_1.hashPassword)(password);
-        yield authRepository.insert(email, passcrypt);
-    });
-}
-exports.registerUser = registerUser;
-function loginUser(user) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const userExists = yield authRepository.findByUser(user.email);
-        if (!userExists) {
-            throw (0, errorUtils_1.notFoundError)(`user not registered`);
-        }
-        const decryptpass = yield (0, passwordUtils_1.comparePassword)(user.password, userExists.password);
-        if (!decryptpass) {
-            throw (0, errorUtils_1.unauthorizedError)(`email or password incorrect`);
-        }
-        const data = {
-            id: userExists.id,
-        };
-        const token = jsonwebtoken_1.default.sign(data, `${process.env.JWT_SECRETKEY}`, {
-            expiresIn: 60 * 60 * 5,
-        });
-        const dateNow = new Date();
-        const session = yield authRepository.findSession(userExists.id);
-        if (session) {
-            if (session.token.length > 0) {
-                yield authRepository.updateSession(session.token, token, dateNow);
-            }
-            else {
-                yield authRepository.insertSession(userExists.id, token);
-            }
-        }
+        const token = res.locals.token;
+        const userData = yield (0, jwtUtils_1.jwtVerify)(token);
+        const session = yield authRepository.findSession(userData.id);
         if (!session)
-            yield authRepository.insertSession(userExists.id, token);
-        return token;
+            throw (0, errorUtils_1.unauthorizedError)(`session no valid`);
+        const dateNow = (0, dayjs_1.default)().format("DD/MM/YYYY HH:mm:ss");
+        const dateSession = (0, dateUtils_1.formatDateNow)(session.createdAt);
+        if (dateNow > dateSession)
+            throw (0, errorUtils_1.unauthorizedError)(`session expired`);
+        next();
     });
 }
-exports.loginUser = loginUser;
-//# sourceMappingURL=authService.js.map
+exports.validateSession = validateSession;
+//# sourceMappingURL=validateSessionMiddleware.js.map

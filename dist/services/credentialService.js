@@ -33,6 +33,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.removeCredential = exports.getAllCredentials = exports.findCredentialById = exports.createCredential = void 0;
+const dateUtils_1 = require("./../utils/dateUtils");
 const passwordUtils_1 = require("./../utils/passwordUtils");
 const errorUtils_1 = require("./../utils/errorUtils");
 const credentialRepository = __importStar(require("../repositories/credentialRepository"));
@@ -40,9 +41,9 @@ const jwtUtils_1 = require("../utils/jwtUtils");
 function createCredential(credential, token) {
     return __awaiter(this, void 0, void 0, function* () {
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
-        const credentialTitleExists = yield credentialRepository.findByTitle(credential.title);
+        const credentialTitleExists = yield credentialRepository.findByTitle(dataUser.id, credential.title);
         if (credentialTitleExists)
-            throw (0, errorUtils_1.conflictError)(`credential exists`);
+            throw (0, errorUtils_1.conflictError)(`title credential exists`);
         const encryptPassword = yield (0, passwordUtils_1.cryptPassword)(credential.password);
         const data = Object.assign(Object.assign({}, credential), { userId: dataUser.id, password: encryptPassword });
         yield credentialRepository.insert(data);
@@ -58,13 +59,14 @@ function findCredentialById(id, token) {
         if (dataUser.id !== credentialExists.userId)
             throw (0, errorUtils_1.unauthorizedError)(`this credential does not belong to this user`);
         const descryptPassword = (0, passwordUtils_1.decryptPassword)(credentialExists.password);
+        const dateFormated = (0, dateUtils_1.formatDate)(credentialExists.createdAt);
         const data = {
             title: credentialExists.title,
             url: credentialExists.url,
             userName: credentialExists.userName,
             password: descryptPassword,
             userId: credentialExists.userId,
-            createdAt: credentialExists.createdAt,
+            createdAt: dateFormated,
         };
         return data;
     });
@@ -75,7 +77,7 @@ function getAllCredentials(token) {
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
         const result = yield credentialRepository.findAllCredentials(dataUser.id);
         const data = result.map((credential) => {
-            return Object.assign(Object.assign({}, credential), { password: (0, passwordUtils_1.decryptPassword)(credential.password) });
+            return Object.assign(Object.assign({}, credential), { password: (0, passwordUtils_1.decryptPassword)(credential.password), createdAt: (0, dateUtils_1.formatDate)(credential.createdAt) });
         });
         return data;
     });

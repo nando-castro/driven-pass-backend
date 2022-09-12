@@ -26,10 +26,16 @@ function deleteNote(id) {
     });
 }
 exports.deleteNote = deleteNote;
-function findByTitle(title) {
+function findByTitle(title, userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const rows = yield database_1.default.note.findUnique({
-            where: { title },
+        const rows = yield database_1.default.note.findFirst({
+            where: {
+                title: {
+                    equals: title,
+                    mode: "insensitive",
+                },
+                userId,
+            },
         });
         return rows;
     });

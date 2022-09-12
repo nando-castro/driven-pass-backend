@@ -12,47 +12,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findAll = exports.findById = exports.findByTitle = exports.deleteNetwork = exports.insert = void 0;
+exports.findAll = exports.findById = exports.findByTitle = exports.deleteDocument = exports.insert = void 0;
 const database_1 = __importDefault(require("../databases/database"));
 function insert(data) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield database_1.default.network.create({ data });
+        yield database_1.default.document.create({ data });
     });
 }
 exports.insert = insert;
-function deleteNetwork(id) {
+function deleteDocument(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield database_1.default.network.delete({ where: { id } });
+        yield database_1.default.document.delete({ where: { id } });
     });
 }
-exports.deleteNetwork = deleteNetwork;
+exports.deleteDocument = deleteDocument;
 function findByTitle(title, userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const rows = yield database_1.default.network.findFirst({
-            where: {
+        const rows = yield database_1.default.document.findFirst({ where: {
                 title: {
                     equals: title,
                     mode: "insensitive",
                 },
                 userId,
-            },
-        });
+            }, });
         return rows;
     });
 }
 exports.findByTitle = findByTitle;
 function findById(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const rows = yield database_1.default.network.findUnique({ where: { id } });
+        const rows = yield database_1.default.document.findUnique({ where: { id } });
         return rows;
     });
 }
 exports.findById = findById;
 function findAll(userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const rows = yield database_1.default.network.findMany({ where: { userId } });
+        const rows = yield database_1.default.document.findMany({ where: { userId } });
         return rows;
     });
 }
 exports.findAll = findAll;
-//# sourceMappingURL=networkRepository.js.map
+//# sourceMappingURL=documentRepository.js.map

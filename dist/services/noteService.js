@@ -36,6 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllNotes = exports.getNoteById = exports.removeNote = exports.createNote = void 0;
+const dateUtils_1 = require("./../utils/dateUtils");
 const errorUtils_1 = require("./../utils/errorUtils");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const noteRepository = __importStar(require("../repositories/noteRepository"));
@@ -43,10 +44,10 @@ const errorUtils_2 = require("../utils/errorUtils");
 const jwtUtils_1 = require("../utils/jwtUtils");
 function createNote(note, token) {
     return __awaiter(this, void 0, void 0, function* () {
-        const noteExists = yield noteRepository.findByTitle(note.title);
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
+        const noteExists = yield noteRepository.findByTitle(note.title, dataUser.id);
         if (noteExists)
-            throw (0, errorUtils_2.conflictError)(`note exixts`);
+            throw (0, errorUtils_2.conflictError)(`title note exixts`);
         const data = Object.assign(Object.assign({}, note), { userId: dataUser.id });
         yield noteRepository.insert(data);
     });
@@ -59,7 +60,7 @@ function removeNote(id, token) {
         const noteExists = yield noteRepository.findById(id);
         if (!noteExists)
             throw (0, errorUtils_1.notFoundError)(`no data in the database`);
-        if (parsedData.id !== noteExists.id)
+        if (parsedData.id !== noteExists.userId)
             throw (0, errorUtils_1.unauthorizedError)(`this note does not belong to this user`);
         yield noteRepository.deleteNote(id);
     });
@@ -71,10 +72,12 @@ function getNoteById(id, token) {
         const noteExists = yield noteRepository.findById(id);
         if (!noteExists)
             throw (0, errorUtils_1.notFoundError)(`no data in the database`);
-        if (dataUser.id !== id)
+        if (dataUser.id !== noteExists.userId)
             throw (0, errorUtils_1.unauthorizedError)(`this note does not belong to this user`);
         const result = yield noteRepository.findById(id);
-        return result;
+        const dateFormated = (0, dateUtils_1.formatDate)(noteExists.createdAt);
+        const data = Object.assign(Object.assign({}, result), { createdAt: dateFormated });
+        return data;
     });
 }
 exports.getNoteById = getNoteById;
@@ -82,7 +85,10 @@ function getAllNotes(token) {
     return __awaiter(this, void 0, void 0, function* () {
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
         const result = yield noteRepository.findAllNotes(dataUser.id);
-        return result;
+        const data = result.map((note) => {
+            return Object.assign(Object.assign({}, note), { createdAt: (0, dateUtils_1.formatDate)(note.createdAt) });
+        });
+        return data;
     });
 }
 exports.getAllNotes = getAllNotes;

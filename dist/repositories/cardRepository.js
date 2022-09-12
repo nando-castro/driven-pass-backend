@@ -33,9 +33,15 @@ function findById(id) {
     });
 }
 exports.findById = findById;
-function findByTitle(title) {
+function findByTitle(title, userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const rows = yield database_1.default.card.findFirst({ where: { title } });
+        const rows = yield database_1.default.card.findFirst({ where: {
+                title: {
+                    equals: title,
+                    mode: "insensitive",
+                },
+                userId,
+            }, });
         return rows;
     });
 }

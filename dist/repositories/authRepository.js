@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findByUser = exports.insert = void 0;
+exports.updateSession = exports.findSession = exports.insertSession = exports.findByUser = exports.insert = void 0;
 const database_1 = __importDefault(require("../databases/database"));
 function insert(email, password) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -28,10 +28,47 @@ exports.insert = insert;
 function findByUser(email) {
     return __awaiter(this, void 0, void 0, function* () {
         const rows = yield database_1.default.user.findFirst({
-            where: { email },
+            where: { email: { equals: email, mode: "insensitive" } },
         });
         return rows;
     });
 }
 exports.findByUser = findByUser;
+function insertSession(userId, token) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield database_1.default.session.create({
+            data: {
+                userId: userId,
+                token: token,
+            },
+        });
+    });
+}
+exports.insertSession = insertSession;
+function findSession(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const rows = yield database_1.default.session.findFirst({
+            where: {
+                userId,
+            },
+        });
+        return rows;
+    });
+}
+exports.findSession = findSession;
+function updateSession(token, newToken, dateNow) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const rows = yield database_1.default.session.update({
+            where: {
+                token,
+            },
+            data: {
+                token: newToken,
+                createdAt: dateNow,
+            },
+        });
+        return rows;
+    });
+}
+exports.updateSession = updateSession;
 //# sourceMappingURL=authRepository.js.map

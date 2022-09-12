@@ -23,17 +23,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.credentialRouter = void 0;
+exports.documentRouter = void 0;
 const express_1 = require("express");
-const credentialController = __importStar(require("../controllers/credentialController"));
+const documentController = __importStar(require("../controllers/documentController"));
 const schemaValidateMiddleware_1 = require("../middlewares/schemaValidateMiddleware");
-const validateSessionMiddleware_1 = require("../middlewares/validateSessionMiddleware");
 const validateTokenMiddleware_1 = require("../middlewares/validateTokenMiddleware");
-const credentialSchema_1 = require("../schemas/credentialSchema");
-const credentialRouter = (0, express_1.Router)();
-exports.credentialRouter = credentialRouter;
-credentialRouter.post("/credential", validateTokenMiddleware_1.validateToken, validateSessionMiddleware_1.validateSession, (0, schemaValidateMiddleware_1.schemaValidateMiddleware)(credentialSchema_1.credentialSchema), credentialController.createCredential);
-credentialRouter.get("/credential/:id", validateTokenMiddleware_1.validateToken, credentialController.getCredential);
-credentialRouter.get("/credentials", validateTokenMiddleware_1.validateToken, credentialController.getAllCredentials);
-credentialRouter.delete("/credential/:id", validateTokenMiddleware_1.validateToken, credentialController.removeCredential);
-//# sourceMappingURL=credentialRouter.js.map
+const documentSchema_1 = require("../schemas/documentSchema");
+const documentRouter = (0, express_1.Router)();
+exports.documentRouter = documentRouter;
+documentRouter.post("/document", validateTokenMiddleware_1.validateToken, (0, schemaValidateMiddleware_1.schemaValidateMiddleware)(documentSchema_1.documentSchema), documentController.createDocument);
+documentRouter.get("/document/:id", validateTokenMiddleware_1.validateToken, documentController.getDocument);
+documentRouter.get("/documents", validateTokenMiddleware_1.validateToken, documentController.getAllDocuments);
+documentRouter.delete("/document/:id", validateTokenMiddleware_1.validateToken, documentController.removeDocument);
+//# sourceMappingURL=documentRouter.js.map

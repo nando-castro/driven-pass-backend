@@ -33,6 +33,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllCards = exports.getCard = exports.removeCard = exports.createCard = void 0;
+const dateUtils_1 = require("./../utils/dateUtils");
 const jwtUtils_1 = require("../utils/jwtUtils");
 const cardRepository = __importStar(require("../repositories/cardRepository"));
 const errorUtils_1 = require("../utils/errorUtils");
@@ -40,7 +41,7 @@ const passwordUtils_1 = require("../utils/passwordUtils");
 function createCard(card, token) {
     return __awaiter(this, void 0, void 0, function* () {
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
-        const cardTitleExists = yield cardRepository.findByTitle(card.title);
+        const cardTitleExists = yield cardRepository.findByTitle(card.title, dataUser.id);
         if (cardTitleExists)
             throw (0, errorUtils_1.conflictError)(`title card exists`);
         const encryptNumberCard = yield (0, passwordUtils_1.cryptPassword)(card.numero);
@@ -67,13 +68,14 @@ function getCard(id, token) {
     return __awaiter(this, void 0, void 0, function* () {
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
         const cardExists = yield cardRepository.findById(id);
-        if (dataUser.id !== id)
-            throw (0, errorUtils_1.unauthorizedError)(`this card does not belong to this user`);
         if (!cardExists)
             throw (0, errorUtils_1.notFoundError)(`no data in the databases`);
-        const descryptNumberCard = yield (0, passwordUtils_1.decryptPassword)(cardExists.numero);
-        const descryptPassword = yield (0, passwordUtils_1.decryptPassword)(cardExists.password);
-        const descryptCode = yield (0, passwordUtils_1.decryptPassword)(cardExists.securityCode);
+        if (dataUser.id !== cardExists.userId)
+            throw (0, errorUtils_1.unauthorizedError)(`this card does not belong to this user`);
+        const descryptNumberCard = (0, passwordUtils_1.decryptPassword)(cardExists.numero);
+        const descryptPassword = (0, passwordUtils_1.decryptPassword)(cardExists.password);
+        const descryptCode = (0, passwordUtils_1.decryptPassword)(cardExists.securityCode);
+        const dateFormated = (0, dateUtils_1.formatDate)(cardExists.createdAt);
         const data = {
             id: cardExists.id,
             title: cardExists.title,
@@ -85,7 +87,7 @@ function getCard(id, token) {
             expirationDate: cardExists.expirationDate,
             isVirtual: cardExists.isVirtual,
             type: cardExists.type,
-            createAt: cardExists.createdAt,
+            createAt: dateFormated,
         };
         return data;
     });
@@ -96,7 +98,7 @@ function getAllCards(token) {
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
         const result = yield cardRepository.findAll(dataUser.id);
         const data = result.map((card) => {
-            return Object.assign(Object.assign({}, card), { numero: (0, passwordUtils_1.decryptPassword)(card.numero), securityCode: (0, passwordUtils_1.decryptPassword)(card.securityCode), password: (0, passwordUtils_1.decryptPassword)(card.password) });
+            return Object.assign(Object.assign({}, card), { numero: (0, passwordUtils_1.decryptPassword)(card.numero), securityCode: (0, passwordUtils_1.decryptPassword)(card.securityCode), password: (0, passwordUtils_1.decryptPassword)(card.password), createdAt: (0, dateUtils_1.formatDate)(card.createdAt) });
         });
         return data;
     });

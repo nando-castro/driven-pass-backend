@@ -32,72 +32,57 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNetworks = exports.getNetworkById = exports.removeNetwork = exports.createNetwork = void 0;
+exports.getAllDocument = exports.getDocument = exports.removeDocument = exports.createCard = void 0;
 const dateUtils_1 = require("./../utils/dateUtils");
-const passwordUtils_1 = require("./../utils/passwordUtils");
-const errorUtils_1 = require("./../utils/errorUtils");
-const jwtUtils_1 = require("./../utils/jwtUtils");
-const networkRepository = __importStar(require("../repositories/networkRepository"));
-function createNetwork(network, token) {
+const jwtUtils_1 = require("../utils/jwtUtils");
+const documentRepository = __importStar(require("../repositories/documentRepository"));
+const errorUtils_1 = require("../utils/errorUtils");
+function createCard(document, token) {
     return __awaiter(this, void 0, void 0, function* () {
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
-        const networkTitleExists = yield networkRepository.findByTitle(network.title, dataUser.id);
-        if (networkTitleExists)
-            throw (0, errorUtils_1.conflictError)(`network title exists`);
-        const encryptPassword = yield (0, passwordUtils_1.cryptPassword)(network.password);
-        const data = {
-            userId: dataUser.id,
-            title: network.title,
-            name: network.name,
-            password: encryptPassword,
-        };
-        yield networkRepository.insert(data);
+        const documentTitleExists = yield documentRepository.findByTitle(document.title, dataUser.id);
+        if (documentTitleExists)
+            throw (0, errorUtils_1.conflictError)(`title document exists`);
+        const data = Object.assign(Object.assign({}, document), { userId: dataUser.id });
+        yield documentRepository.insert(data);
     });
 }
-exports.createNetwork = createNetwork;
-function removeNetwork(id, token) {
+exports.createCard = createCard;
+function removeDocument(id, token) {
     return __awaiter(this, void 0, void 0, function* () {
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
-        const networkExists = yield networkRepository.findById(id);
-        if (!networkExists)
+        const documentExists = yield documentRepository.findById(id);
+        if (!documentExists)
             throw (0, errorUtils_1.notFoundError)(`no data in the database`);
-        if (dataUser.id !== networkExists.userId)
-            throw (0, errorUtils_1.unauthorizedError)(`this network does not belong to this user`);
-        yield networkRepository.deleteNetwork(id);
+        if (dataUser.id !== documentExists.userId)
+            throw (0, errorUtils_1.unauthorizedError)(`this document does not belong to this user`);
+        yield documentRepository.deleteDocument(id);
     });
 }
-exports.removeNetwork = removeNetwork;
-function getNetworkById(id, token) {
+exports.removeDocument = removeDocument;
+function getDocument(id, token) {
     return __awaiter(this, void 0, void 0, function* () {
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
-        const networkExists = yield networkRepository.findById(id);
-        if (dataUser.id !== id)
-            throw (0, errorUtils_1.unauthorizedError)(`this network does not belong to this user`);
-        if (!networkExists)
+        const documentExists = yield documentRepository.findById(id);
+        if (!documentExists)
             throw (0, errorUtils_1.notFoundError)(`no data in the databases`);
-        const descryptPassword = (0, passwordUtils_1.decryptPassword)(networkExists.password);
-        const dateFormated = (0, dateUtils_1.formatDate)(networkExists.createdAt);
-        const data = {
-            id: networkExists.id,
-            title: networkExists.title,
-            userId: networkExists.userId,
-            name: networkExists.name,
-            password: descryptPassword,
-            createAt: dateFormated,
-        };
+        if (dataUser.id !== documentExists.userId)
+            throw (0, errorUtils_1.unauthorizedError)(`this document does not belong to this user`);
+        const dateFormated = (0, dateUtils_1.formatDate)(documentExists.createdAt);
+        const data = Object.assign(Object.assign({}, documentExists), { createdAt: dateFormated });
         return data;
     });
 }
-exports.getNetworkById = getNetworkById;
-function getNetworks(token) {
+exports.getDocument = getDocument;
+function getAllDocument(token) {
     return __awaiter(this, void 0, void 0, function* () {
         const dataUser = yield (0, jwtUtils_1.jwtVerify)(token);
-        const result = yield networkRepository.findAll(dataUser.id);
-        const data = result.map((network) => {
-            return Object.assign(Object.assign({}, network), { password: (0, passwordUtils_1.decryptPassword)(network.password), createdAt: (0, dateUtils_1.formatDate)(network.createdAt) });
+        const result = yield documentRepository.findAll(dataUser.id);
+        const data = result.map((document) => {
+            return Object.assign(Object.assign({}, document), { createdAt: (0, dateUtils_1.formatDate)(document.createdAt) });
         });
         return data;
     });
 }
-exports.getNetworks = getNetworks;
-//# sourceMappingURL=networkService.js.map
+exports.getAllDocument = getAllDocument;
+//# sourceMappingURL=documentService.js.map

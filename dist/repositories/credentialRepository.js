@@ -22,11 +22,15 @@ function insert(data) {
     });
 }
 exports.insert = insert;
-function findByTitle(title) {
+function findByTitle(userId, title) {
     return __awaiter(this, void 0, void 0, function* () {
         const rows = yield database_1.default.credential.findFirst({
             where: {
-                title,
+                title: {
+                    equals: title,
+                    mode: "insensitive",
+                },
+                userId,
             },
         });
         return rows;

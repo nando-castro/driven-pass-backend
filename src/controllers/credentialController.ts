@@ -6,7 +6,7 @@ export async function createCredential(req: Request, res: Response) {
   const credential: TypeCredentialData = req.body;
   const { token } = res.locals;
   await credentialService.createCredential(credential, token);
-  res.status(200).send(`credential add sucessfull`);
+  res.status(201).send(`credential add sucessfull`);
 }
 
 export async function getCredential(req: Request, res: Response) {
