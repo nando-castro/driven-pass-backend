@@ -1,5 +1,3 @@
-# Driven Pass
-
 A password manager.
 
 
@@ -28,12 +26,67 @@ To run this project, you will need to add the following environment variables to
 
 ## API Documentation
 
-### Returns all credentials
+### Signup
 
+#### Required
+
+```http
+  POST /api/signup
+```
+
+#### Body
+```json
+{
+  "email": "email@email.com",
+  "password": "password"
+}
+```
+​
+| Parameter   | Type       | Description                                   |
+| :---------- | :--------- | :------------------------------------------ |
+| `email`      | `string` | **Required**. Email account |
+| `password`      | `string` | **Required**. Password |
+
+#### Response
+
+| Status   | Type       | Description                                   |
+| :---------- | :--------- | :------------------------------------------ |
+| `201`      | `created` | **Response**. Status Code |
+
+### Signin
+
+#### Required
+
+```http
+  POST /api/signin
+```
+
+#### Body
+```json
+{
+  "email": "email@email.com",
+  "password": "password"
+}
+```
+​
+| Parameter   | Type       | Description                                   |
+| :---------- | :--------- | :------------------------------------------ |
+| `email`      | `string` | **Required**. Email account |
+| `password`      | `string` | **Required**. Password |
+
+#### Response
+
+| Status   | Type       | Description                                   |
+| :---------- | :--------- | :------------------------------------------ |
+| `200`      | `OK` | **Response**. Token |
+
+
+### Returns all credentials
+​
 ```http
   GET /api/credenials
 ```
-
+​
 | Parameter   | Type       | Description                           |
 | :---------- | :--------- | :---------------------------------- |
 | `Authorization` | `string` | **Required**. A token generated at sign in |
@@ -57,9 +110,9 @@ To run this project, you will need to add the following environment variables to
 }
 ```
 
-### Returns a credential
+### Return a credential
 
-##### Required
+#### Required
 
 ```http
   GET /api/credential/${id}
@@ -67,6 +120,7 @@ To run this project, you will need to add the following environment variables to
 
 | Parameter   | Type       | Description                                   |
 | :---------- | :--------- | :------------------------------------------ |
+| `Authorization` | `string` | **Required**. A token generated at sign in |
 | `id`      | `string` | **Required**. The ID of the item you want |
 
 #### Response
