@@ -20,6 +20,8 @@ model Card {
   type           CardType
   createdAt      DateTime @default(now()) @db.Timestamptz()
   User           User     @relation(fields: [userId], references: [id])
+
+  @@map("cards")
 }
 
 model Credential {
@@ -31,6 +33,8 @@ model Credential {
   password  String   @db.VarChar(255)
   createdAt DateTime @default(now()) @db.Timestamptz()
   User      User     @relation(fields: [userId], references: [id])
+
+  @@map("credentials")
 }
 
 model Document {
@@ -45,6 +49,8 @@ model Document {
   issuer         String       @db.VarChar(255)
   createdAt      DateTime     @default(now()) @db.Timestamptz()
   User           User         @relation(fields: [userId], references: [id])
+
+  @@map("documents")
 }
 
 model Network {
@@ -55,6 +61,8 @@ model Network {
   password  String   @db.VarChar
   createdAt DateTime @default(now()) @db.Timestamptz()
   User      User     @relation(fields: [userId], references: [id])
+
+  @@map("networks")
 }
 
 model Note {
@@ -64,6 +72,8 @@ model Note {
   text      String   @db.VarChar(1000)
   createdAt DateTime @default(now()) @db.Timestamptz()
   User      User     @relation(fields: [userId], references: [id])
+
+  @@map("notes")
 }
 
 model Session {
@@ -72,6 +82,8 @@ model Session {
   userId    Int
   createdAt DateTime @default(now()) @db.Timestamptz()
   User      User     @relation(fields: [userId], references: [id])
+
+  @@map("sessions")
 }
 
 model User {
@@ -85,6 +97,8 @@ model User {
   Note       Note[]
   Session    Session[]
   Document   Document[]
+
+  @@map("users")
 }
 
 enum CardType {
