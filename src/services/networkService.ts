@@ -38,7 +38,7 @@ export async function removeNetwork(id: number, token: string) {
 export async function getNetworkById(id: number, token: string) {
   const dataUser = await jwtVerify(token);
   const networkExists = await networkRepository.findById(id);
-  if (dataUser.id !== id)
+  if (dataUser.id !== networkExists?.userId)
     throw unauthorizedError(`this network does not belong to this user`);
   if (!networkExists) throw notFoundError(`no data in the databases`);
   const descryptPassword = decryptPassword(networkExists.password);
